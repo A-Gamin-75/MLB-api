@@ -2,6 +2,7 @@ import statsapi
 from pprint import pprint
 import pandas as pd
 import csv
+from datetime import date
 
 
 def extract_leaf_paths(data, path=""):
@@ -9,6 +10,8 @@ def extract_leaf_paths(data, path=""):
     fields = []
     if isinstance(data, dict):
         for k, v in data.items():
+            if k == "copyright":
+                continue
             new_path = f"{path}.{k}" if path else k
             fields.extend(extract_leaf_paths(v, new_path))
     elif isinstance(data, list):
@@ -48,8 +51,8 @@ def extract_leaf_fields(data, file=None):
         df.to_csv(file, index=False)
         print(f"✅ Summary written to {file}")
 
-endpoint = 'teams'
+endpoint = 'schedule'
 # params = {'gamePk': 777103}
-params = {'sportId': 1}
+params = {'startDate':date.today(), 'endDate': date.today(), 'sportId': 1}
 dataset = statsapi.get(endpoint, params)
 extract_leaf_fields(dataset,file=f"{endpoint}_fields.csv")
